@@ -22,14 +22,11 @@ from .FunctionsPill import centrText,imgD,imagSize
 from .options import *
 from . import openFile
 
-async def create_picture(person,element,imgs,adapt,splash = None):
+async def create_picture(element,imgs,splash):
     if imgs:
-        frame = userImageTwo(imgs, element = element, adaptation = adapt)
+        frame = userImageTwo(imgs, element = element, adaptation = True)
     else:
-        if splash:
-            banner = await imagSize(link = splash,size = (1974,1048))
-        else:
-            banner = await imagSize(link = person.images.banner.url, size = (1974,1048))
+        banner = await imagSize(link = splash,size = (1974,1048))
         frame = maskaAdd(element, banner, teample = 2)
     return frame
 
@@ -305,7 +302,11 @@ async def creatUserInfo(hide,uid,player,lang, nameCharter = None, namecard = Fal
     defoldBgNamecard = Image.composite(defoldBgNamecard, bannerUserNamecard, maskaBannerNamecard)
     frameUserNamecard = openFile.infoUserFrameTeampleTwo.copy()
     defoldBgNamecard.alpha_composite(openFile.infoUserFrameBannerTeampleTwo,(0,0))
-    avatar = await imagSize(link = player.avatar.icon.url,size = (150,150))
+    if player.avatar.icon is None:
+        avatar ="https://enka.network/ui/UI_AvatarIcon_Furina.png"
+    else:
+        avatar = player.avatar.icon.url
+    avatar = await imagSize(link = avatar,size = (150,150))
     avatar = Image.composite(frameUserNamecard, avatar, openFile.infoUserMaskaAvatarTeampleTwo.convert('L'))
     frameUserNamecard.alpha_composite(avatar,(0,0))
     d = ImageDraw.Draw(frameUserNamecard)
@@ -367,15 +368,12 @@ def appedFrame(frame,weaponRes,nameRes,statRes,constantRes,talatsRes,artifacRes,
     return banner
 
 
-async def generationTwo(characters,assets,img,adapt,signatureRes,lvl, splash):
+async def generationTwo(characters,assets,img,signatureRes,lvl):
     person = assets.character(characters.id)
     starsRes = starsAdd(person)
     elementRes = elementIconPanel(characters.element.value)
     tassk = []
-    if splash:
-        tassk.append(create_picture(person,characters.element.value,img,adapt,characters.image.banner.url))
-    else:
-        tassk.append(create_picture(person,characters.element.value,img,adapt))
+    tassk.append(create_picture(characters.element.value,img,characters.image.banner.url))
     tassk.append(weaponAdd(characters.equipments[-1],lvl))
     tassk.append(nameBanner(characters,lvl))
     tassk.append(stats(characters,assets))

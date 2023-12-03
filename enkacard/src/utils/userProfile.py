@@ -10,33 +10,36 @@ async def characters(player,assets,image):
     t12 = ImageFont.truetype(openFile.font, 12)
     result = []
     charterList = {}
-    charactersArg = ""
+    charactersArg = []
+    charactersids = []
     for key in player:
         person = assets.character(key.id)
         if not key.name in charterList:
             charterList[key.name] = {"rarity": person.rarity, "image": key.icon.url, "element": key.element.value, "id": key.id}
-            charactersArg += f"{key.name},"
+            charactersArg.append(key.name)
+            charactersids.append(key.id)
         if image:
             if person.rarity == 4:
                 iconCharter = Image.open(f'{path}/InfoCharter/iconCharter4.png')
             else:
                 iconCharter = Image.open(f'{path}/InfoCharter/iconCharter5.png')
-            iconsCharter = await imagSize(link = key.icon.url, fixed_width = 50) 
+            iconsCharter = await imagSize(link = key.icon.url, fixed_width = 50)
             lvlCharter = str(key.level)
             d = ImageDraw.Draw(iconCharter)
             iconCharter.paste(iconsCharter,(3,3),iconsCharter)
             d.text((19,56), lvlCharter, font= t12, fill=(255,255,255,255))
             result.append(iconCharter)
-    
-    return result,charterList,charactersArg
+
+    return result,charterList,charactersArg,charactersids
 
 
 
 async def charactersTwo(player,assets,image):
     t12 = ImageFont.truetype(openFile.font, 11)
     result = []
-    charterList = {}
-    charactersArg = ""
+    charterList = []
+    charactersArg = []
+    charactersids = []
     for key in player:
         charter_bg = openFile.charter_bg.copy()
         person = assets.character(key.id)
@@ -54,18 +57,19 @@ async def charactersTwo(player,assets,image):
                 banner = await imagSize(link = linkImgCard,size = (130,57))
             except:
                 pass
-            
+
         charter_icon_mask = openFile.charter_icon_mask
-        if not key.name in charterList:
-            charterList[key.name] = {"rarity": person.rarity, "image": key.icon.url, "element": key.element.value, "id": key.id}
-            charactersArg += f"{key.name},"
+        charactersArg.append(key.name)
+        charactersids.append(key.id)
+
+        charterList.append({"name": key.name, "rarity": person.rarity, "image": key.icon.url, "element": key.element.value, "id": key.id})
         if image:
             if person.rarity == 4:
                 iconCharter = openFile.charter_icon_4.copy()
             else:
                 iconCharter = openFile.charter_icon_5.copy()
 
-            iconsCharterImg = await imagSize(link = key.icon.url, fixed_width = 71) 
+            iconsCharterImg = await imagSize(link = key.icon.url, fixed_width = 71)
             lvlCharter = str(key.level)
             iconCharters = Image.composite(iconCharter, iconsCharterImg, charter_icon_mask.convert("L"))
             charter_bg.alpha_composite(banner,(32,11))
@@ -74,7 +78,7 @@ async def charactersTwo(player,assets,image):
 
             d = ImageDraw.Draw(charter_bg)
 
-            xx,y = t12.getsize(nameCharter)
+            xx = t12.getlength(nameCharter)
             d.text((int(111-xx/2),-1), nameCharter, font= t12, fill=(255,255,255,255))
 
             d.text((26,69), lvlCharter, font= t12, fill=(0,0,0,255))
@@ -82,7 +86,7 @@ async def charactersTwo(player,assets,image):
 
             result.append(charter_bg)
 
-    return {"r": result,"c": charterList, "ca": charactersArg}
+    return {"r": result,"c": charterList, "ca": charactersArg, "cid":charactersids}
 
 
 async def nameCard(player, fullBg):
@@ -96,12 +100,16 @@ async def nameCard(player, fullBg):
     bannerUserNamecard = bannerUserNamecard.resize((194,327))
     fullBg.paste(bannerUserNamecard,(26,0),openFile.banner_mask.convert("L"))
     fullBg.alpha_composite(banner_light,(26,0))
-    
+
     return fullBg
 
 async def avatar(fullBg,player):
     ram_avatar = openFile.ram_avatar
-    picturesProfile = await imagSize(link = player.avatar.icon.url,fixed_width = 159)
+    if player.avatar.icon is None:
+        avatar ="https://enka.network/ui/UI_AvatarIcon_Furina.png"
+    else:
+        avatar = player.avatar.icon.url
+    picturesProfile = await imagSize(link = avatar,fixed_width = 159)
     avatar_user_bg = openFile.avatar_user_bg.copy()
     avatar_user_bg.alpha_composite(picturesProfile,(0,0))
     avatar_user_bg = avatar_user_bg.resize((159,159))
@@ -121,11 +129,11 @@ async def drawText(text):
                 lineText = ""
         line.append(lineText)
         return "\n ".join(line[:3])
-    
+
     else:
         return text
-    
-   
+
+
 
 async def usersInfo(player, lang,hide,uid):
     fullBg = openFile.bgProfile.copy().convert("RGBA")
@@ -133,7 +141,7 @@ async def usersInfo(player, lang,hide,uid):
     d = ImageDraw.Draw(bg)
     t20 = ImageFont.truetype(openFile.font, 20)
     t14 = ImageFont.truetype(openFile.font, 14)
-    xx,y = t20.getsize(player.nickname)
+    xx = t20.getlength(player.nickname)
     d.text((int(109-xx/2),43), str(player.nickname), font= t20, fill=(255,255,255,255))
 
     d.text((330,10), f"{lang['WL']}:", font= t20, fill=(255,255,255,255))
@@ -143,11 +151,11 @@ async def usersInfo(player, lang,hide,uid):
     d.text((388,47), str(player.level), font= t20, fill=(203,75,75,255))
 
     d.text((349,84), f"{lang['AB']}:", font= t14, fill=(255,255,255,255))
-    xx,y = t14.getsize(lang['AB'])
+    xx = t14.getlength(lang['AB'])
     d.text((349+xx+10,84), f"{player.abyss_floor}-{player.abyss_room}", font= t14, fill=(203,75,75,255))
 
     d.text((336,114), f"{lang['AC']}:", font= t14, fill=(255,255,255,255))
-    xx,y = t14.getsize(lang['AC'])
+    xx = t14.getlength(lang['AC'])
     d.text((336+xx+10,115), str(player.achievement), font= t14, fill=(203,75,75,255))
 
     if hide:
@@ -157,7 +165,7 @@ async def usersInfo(player, lang,hide,uid):
         d.text((70,10), "UID:", font= t14, fill=(255,255,255,255))
         d.text((108,10), str(uid), font= t14, fill=(203,75,75,255))
     signature = player.signature
-    
+
     result = await drawText(signature)
     d.multiline_text((23,85), result, font= t14, fill=(255,255,255,255))
 
@@ -165,17 +173,17 @@ async def usersInfo(player, lang,hide,uid):
     fullBg = await avatar(fullBg,player)
 
     return await nameCard(player,fullBg)
-    
+
 async def creatUserProfile(image,player,lang,hide,uid,assets,teample):
     start = time.time()
     if teample == 1:
         t12 = ImageFont.truetype(openFile.font, 12)
         t17 = ImageFont.truetype(openFile.font, 17)
-        Avatar = Image.open(f'{path}/InfoCharter/AvatarUser.png') 
-        Background = Image.open(f'{path}/InfoCharter/bg.png') 
+        Avatar = Image.open(f'{path}/InfoCharter/AvatarUser.png')
+        Background = Image.open(f'{path}/InfoCharter/bg.png')
         UserName = Image.open(f'{path}/InfoCharter/UserName.png')
         Bg = None
-        charactersListImage,charactersList,charactersArg = await characters(player.characters_preview,assets,image)
+        charactersListImage,charactersList,charactersArg,charters_id = await characters(player.characters_preview,assets,image)
         if image:
             if player.namecard.navbar.url == "https://enka.network/ui/.png":
                 ibanner = Image.open(f'{path}/InfoCharter/DEFAULT.png')
@@ -183,7 +191,11 @@ async def creatUserProfile(image,player,lang,hide,uid,assets,teample):
             else:
                 bannerUserNamecard = await imagSize(link = player.namecard.navbar.url, size = (661,105))
             Background.paste(bannerUserNamecard,(123 ,145),bannerUserNamecard)
-            picturesProfile = await imagSize(link = player.avatar.icon.url,fixed_width = 179)
+            if player.avatar.icon is None:
+                avatarx ="https://enka.network/ui/UI_AvatarIcon_Furina.png"
+            else:
+                avatarx = player.avatar.icon.url
+            picturesProfile = await imagSize(link = avatarx,fixed_width = 179)
             picturesProfile = picturesProfile.convert('RGBA')
             Avatar.paste(picturesProfile,(0,0),picturesProfile)
             Background.paste(Avatar,(41,110),openFile.MaskaInfoUser.convert("L"))
@@ -208,13 +220,13 @@ async def creatUserProfile(image,player,lang,hide,uid,assets,teample):
                 Background.paste(key,(x,70),key)
                 x = x+66
             Bg = Background
-        return {"characters": charactersList, "charactersArg": charactersArg, "img": Bg, "performed":float('{:.2f}'.format(time.time()-start))}
-    
+        return {"characters": charactersList, "character_name": charactersArg, "character_id": charters_id, "img": Bg, "performed":float('{:.2f}'.format(time.time()-start))}
+
     else:
         task = [usersInfo(player,lang,hide,uid),charactersTwo(player.characters_preview,assets,image)]
         it = await asyncio.gather(*task)
         fullBg = it[0]
-        charactersListImage,charactersList,charactersArg = it[1]["r"], it[1]["c"], it[1]["ca"]
+        charactersListImage,charactersList,charactersArg,charters_id = it[1]["r"], it[1]["c"], it[1]["ca"], it[1]["cid"]
         positions = [
             (265,201),(448,201),(641,201),
             (265,305),(448,305),(641,305),
@@ -224,4 +236,4 @@ async def creatUserProfile(image,player,lang,hide,uid,assets,teample):
         for key in charactersListImage:
             fullBg.alpha_composite(key,positions[i])
             i += 1
-        return {"characters": charactersList, "charactersArg": charactersArg, "img": fullBg, "performed":float('{:.2f}'.format(time.time()-start))}
+        return {"character": charactersList, "character_name": charactersArg, "character_id": charters_id, "img": fullBg, "performed":float('{:.2f}'.format(time.time()-start))}

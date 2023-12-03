@@ -7,137 +7,6 @@ from .gradient import userAdaptGrandient, colorBg
 import os
 path = os.path.dirname(__file__).replace("utils","assets")
 
-'''
-        x,y = userImages.size
-        baseheight = 1200
-
-        if x > y or x == y:
-            baseheight = 787
-        hpercent = (baseheight / float (y)) 
-        wsize = int ((float (x) * float (hpercent)))
-        userImages = userImages.resize ((wsize, baseheight), Image.LANCZOS) 
-
-        if x > y or x == y:
-            return userImages, -int(userImages.size[0]/2-300)
-        else:
-            x,y = userImages.size
-            if x < 738:
-                return userImages, -int(userImages.size[0]/2*0.2)
-            else:
-                return userImages, -int(userImages.size[0]-738)
-        
-
-        x,y = userImages.size
-        if x > y:
-            baseheight = 787
-            hpercent = (baseheight / float (y)) 
-            wsize = int ((float (x) * float (hpercent)))
-            userImages = userImages.resize ((wsize, baseheight), Image.LANCZOS)
-            return userImages, -int(userImages.size[0]/2-300)
-        elif x == y or x-y < 10:
-            basewidth = 838
-            wpercent = (basewidth / float(userImages.size[0]))
-            hsize = int((float(userImages.size[1]) * float(wpercent)))
-            userImages = userImages.resize((basewidth, hsize), Image.LANCZOS)
-            return userImages, -81
-        else:
-            basewidth = 838
-            wpercent = (basewidth / float(userImages.size[0]))
-            hsize = int((float(userImages.size[1]) * float(wpercent)))
-            userImages = userImages.resize((basewidth, hsize), Image.LANCZOS)
-            return userImages, 0
-
-
-            basewidth = 575
-            wpercent = (basewidth / float(userImages.size[0]))
-            hsize = int((float(userImages.size[1]) * float(wpercent)))
-            userImages = userImages.resize((basewidth, hsize), Image.LANCZOS)
-            return userImages, 0
-            # вертикальное
-
-x,y = userImages.size
-sizeImg = x/y
-if sizeImg > 1.1:
-    baseheight = 1048
-    hpercent = (baseheight / float (y)) 
-    wsize = int ((float (x) * float (hpercent)))
-    userImages = userImages.resize((wsize, baseheight), Image.LANCZOS)
-    if sizeImg > 1.1 and sizeImg < 1.19 or sizeImg > 2.1 :
-        return userImages, 0
-    else:
-        return userImages, 487
-else:
-    basewidth = 1085
-    wpercent = (basewidth / float(userImages.size[0]))
-    hsize = int((float(userImages.size[1]) * float(wpercent)))
-    userImages = userImages.resize((basewidth, hsize), Image.LANCZOS)
-    return userImages, 487
-
-x,y = userImages.size
-baseheight = 1500
-
-if x > y or x == y:
-    baseheight = 1048
-hpercent = (baseheight / float (y)) 
-wsize = int ((float (x) * float (hpercent)))
-userImages = userImages.resize((wsize, baseheight), Image.LANCZOS) 
-
-if x > y or x == y:
-    return userImages, 0
-else:
-    return userImages, 555
-
-x,y = userImages.size
-        baseheight = 965
-
-        if x > y or x == y:
-            baseheight = 621
-        hpercent = (baseheight / float (y)) 
-        wsize = int ((float (x) * float (hpercent)))
-        userImages = userImages.resize((wsize, baseheight), Image.LANCZOS) 
-
-        if x > y or x == y:
-            return userImages, -359
-        else:
-            x,y = userImages.size
-            if x < 552:
-                return userImages, -int(userImages.size[0]/2*0.2)
-            else:
-                return userImages, -int(userImages.size[0]-552)
-            #return userImages, -116
-
-x,y = userImages.size
-        baseheight = 1311
-
-        if x > y or x == y:
-            baseheight = 802
-        hpercent = (baseheight / float (y)) 
-        wsize = int ((float (x) * float (hpercent)))
-        userImages = userImages.resize ((wsize, baseheight), Image.LANCZOS) 
-
-        if x > y or x == y:
-            return userImages, -int(userImages.size[0]/2-300)
-        else:
-            x,y = userImages.size
-            if x < 806:
-                return userImages, 0
-            else:
-                return userImages, -int(x-806) 
-x,y = userImages.size
-        sizeImg = x/y
-        if sizeImg > 1.1:
-            baseheight = 621 
-            hpercent = (baseheight / float (y)) 
-            wsize = int ((float (x) * float (hpercent)))
-            userImages = userImages.resize ((wsize, baseheight), Image.LANCZOS)
-            return userImages, -int(userImages.size[0]/2-250)
-        else:
-            basewidth = 667
-            wpercent = (basewidth / float(userImages.size[0]))
-            hsize = int((float(userImages.size[1]) * float(wpercent)))
-            userImages = userImages.resize((basewidth, hsize), Image.LANCZOS)
-            return userImages, -119           
-'''
 def centryImage(userImages, teample = 1):
     if teample == 6:
         x,y = userImages.size
@@ -399,6 +268,7 @@ def userImage(img,element = None, adaptation = False):
     userImagess,pozitionX = centryImage(img)
     if adaptation:
         grandient = userAdaptGrandient(userImagess.convert("RGB").copy())
+        grandient = grandient.resize((1502,787))
         Effect = openFile.UserEffectTeampleOne.copy().convert('RGBA')
         grandient = ImageChops.soft_light(grandient,Effect)
         
@@ -420,7 +290,8 @@ def userImage(img,element = None, adaptation = False):
 def userImageTree(img,element = None, adaptation = False):
     userImagess,pozitionX,types = centryImage(img, teample = 3)
     if adaptation:
-        grandient = userAdaptGrandient(userImagess.convert("RGB").copy(), size =(1924,802))
+        grandient = userAdaptGrandient(userImagess.convert("RGB").copy(), size =(2,802))
+        grandient = grandient.resize((1924,802))
         Effect = openFile.EffectBgTree.copy().convert("RGBA")
         grandient = ImageChops.soft_light(grandient,Effect)
         Effect.alpha_composite(userImagess,pozitionX)
@@ -434,7 +305,7 @@ def userImageTree(img,element = None, adaptation = False):
     else:
         bg = openImageElement(element, teample = 3)
         effect = bg.copy()
-        bg.alpha_composite(userImagess,(pozitionX,0))
+        bg.alpha_composite(userImagess,pozitionX)
         im = Image.composite(bg, effect, openFile.UserBgTeampleImgTree.convert("L"))
         bg.alpha_composite(im,(0,0))
         bg.alpha_composite(openFile.EffectBgTeampleTree.convert("RGBA"),(0,0))
@@ -445,8 +316,10 @@ def userImageTwo(img,element = None, adaptation = False):
     userImagess,pozitionX,types = centryImage(img, teample = 2)
     if adaptation:
         bg = openImageElement("error", teample = 2)
-        grandientLeft = userAdaptGrandient(userImagess.convert("RGB").copy(), size = (1038, 1048),left = True)
-        grandientRight = userAdaptGrandient(userImagess.convert("RGB").copy(), size = (937, 1048))
+        grandientLeft = userAdaptGrandient(userImagess.convert("RGB").copy(), size = (2, 1048),left = True)
+        grandientLeft = grandientLeft.resize((1038,1048))
+        grandientRight = userAdaptGrandient(userImagess.convert("RGB").copy(), size = (2, 1048))
+        grandientRight = grandientRight.resize((937,1048))
         bg.alpha_composite(grandientLeft,(0,0))
         bg.alpha_composite(grandientRight,(grandientLeft.size[0],0))
         Effect = openFile.UserEffectTeampleTwo.copy().convert("RGBA")
@@ -466,26 +339,6 @@ def userImageTwo(img,element = None, adaptation = False):
         im = Image.composite(bg, effect, openFile.UserBgTeampleTwo.convert("L"))
         bg.alpha_composite(im,(0,0))
         return bg
-
-'''
-def userImageBlur(img,element = None, adaptation = False):
-    userImagess,pozitionX = centryImage(img)
-    if adaptation:
-        Effect = UserEffectTeampleOne.copy()
-        bgBlur = userImagess.filter(ImageFilter.GaussianBlur(radius=80)).resize(Effect.size).convert("RGBA")
-        bgBlur = ImageChops.screen(bgBlur,Effect)
-        Effect.paste(userImagess,(pozitionX,0),userImagess)
-        bg = Image.composite(Effect, bgBlur, MaskaUserBg2TeampleOne) 
-        return bg
-    else:
-        img = openImageElement(element)
-        effect = img.copy()
-        img.paste(userImagess,(pozitionX,0))
-        img.show()
-        im = Image.composite(img, effect, MaskaUserBgTeampleOne)
-        img.paste(im,(0,0))
-        return img
-'''
 
 def star(x):
     if x == 1:
@@ -617,19 +470,6 @@ def centrFive(userImages):
             return userImages, (818,0), 1
         userImages = userImages.resize((basewidth, hsize), Image.LANCZOS)
         return userImages, (0,0), 0
-        '''
-        baseheight = 1453
-        hpercent = (baseheight / float (y)) 
-        wsize = int ((float (x) * float (hpercent)))
-        print(wsize)
-        if wsize < 2605:
-            baseheight = 997
-            hpercent = (baseheight / float (y)) 
-            wsize = int ((float (x) * float (hpercent)))
-            userImages = userImages.resize ((wsize, baseheight), Image.LANCZOS)
-            return userImages, (818,0), 1
-        userImages = userImages.resize ((wsize, baseheight), Image.LANCZOS)
-        return userImages, (0,-131), 0'''
     else:
         basewidth = 1087
         wpercent = (basewidth / float(userImages.size[0]))
@@ -665,8 +505,10 @@ async def creatFiveBg(userImages,element = "Rock",adapt = False):
             bg = Image.composite(bg, imgBlur, openFile.MASKA_ADAPT_WIDTH.convert("L"))
         elif format == 1:
             bg = openBgElementFive(element).copy().convert("RGBA")
-            grandientLeft = userAdaptGrandient(img.convert("RGB").copy(), size = (1302, 997),left = True)
-            grandientRight = userAdaptGrandient(img.convert("RGB").copy(), size = (1302, 997))
+            grandientLeft = userAdaptGrandient(img.convert("RGB").copy(), size = (2, 997),left = True)
+            grandientLeft = grandientLeft.resize((1302,997))
+            grandientRight = userAdaptGrandient(img.convert("RGB").copy(), size = (2, 997))
+            grandientRight = grandientRight.resize((1302,997))
             bg.alpha_composite(grandientLeft,(0,0))
             bg.alpha_composite(grandientRight,(1303,0))
             Effect = openFile.STARS_BG.copy().convert("RGBA")
@@ -675,8 +517,10 @@ async def creatFiveBg(userImages,element = "Rock",adapt = False):
             bg = Image.composite(Effect, grandient, openFile.MASKA_ADAPT_HEIGHT_TWO.convert("L"))
         else:
             bg = openBgElementFive(element).copy().convert("RGBA")
-            grandientLeft = userAdaptGrandient(img.convert("RGB").copy(), size = (1302, 997),left = True)
-            grandientRight = userAdaptGrandient(img.convert("RGB").copy(), size = (1302, 997))
+            grandientLeft = userAdaptGrandient(img.convert("RGB").copy(), size = (2, 997),left = True)
+            grandientLeft = grandientLeft.resize((1302,997))
+            grandientRight = userAdaptGrandient(img.convert("RGB").copy(), size = (2, 997))
+            grandientRight = grandientRight.resize((1302,997))
             bg.alpha_composite(grandientLeft,(0,0))
             bg.alpha_composite(grandientRight,(1303,0))
             Effect = openFile.STARS_BG.copy().convert("RGBA")
@@ -801,3 +645,17 @@ async def starFive(x,weapon = True):
             return openFile.stars_frame4
         elif x == 5:
             return openFile.stars_frame5
+        
+
+async def open_bg_artifact(x, template = 1):
+    if template == 1:
+        if x == 5:
+            return openFile.bg_5stars.copy()
+        elif x == 4:
+            return openFile.bg_4stars.copy()
+        elif x == 3:
+            return openFile.bg_3stars.copy()
+        elif x == 2:
+            return openFile.bg_2stars.copy()
+        elif x == 1:
+            return openFile.bg_1stars.copy()

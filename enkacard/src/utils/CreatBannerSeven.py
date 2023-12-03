@@ -11,7 +11,7 @@ import math,asyncio
 
 
 
-async def background(imgs,splash,element,signatureRes,characters,player, lvl):
+async def background(imgs,splash,element,signatureRes,characters,player, lvl, typelang):
     if splash:
         try:
             imgs = await imagSize(link = imgs,size = (1428,711))
@@ -35,7 +35,10 @@ async def background(imgs,splash,element,signatureRes,characters,player, lvl):
     level = f'{lvl["lvl"]}: {characters.level}/'
     x = fontSize(28).getlength(level)
     d.text((38,74), level, font= gen.fontSize(28), fill=options.coloring)
-    frame.alpha_composite(of.max_lvl,(int(38+x+2),77))
+    if typelang == 0:
+        frame.alpha_composite(of.max_lvl,(int(38+x+2),77))
+    else:
+        frame.alpha_composite(of.max_lvl_kh,(int(38+x+2),77))
     d.text((79,117), str(characters.friendship_level), font= gen.fontSize(23), fill=options.coloring)
     d.text((38,352), f'{lvl["WL"]}:', font= gen.fontSize(17), fill=options.coloring)
     d.text((93,351), str(player.world_level), font= gen.fontSize(17), fill=(245,222,179,255))
@@ -143,7 +146,7 @@ async def stats(AttributeBg,characters,assets):
 
     return AttributeBg
 
-async def weapon(WeaponBg,characters,lvlName):
+async def weapon(WeaponBg,characters,lvlName, typelang):
     if characters.detail.artifact_name_set != "":
         return None
     d = ImageDraw.Draw(WeaponBg)
@@ -170,7 +173,10 @@ async def weapon(WeaponBg,characters,lvlName):
 
     WeaponBg.alpha_composite(image,(38,400))
     WeaponBg.alpha_composite(stars,(6,517))
-    mv = of.max_lvl.copy()
+    if typelang == 0:
+        mv = of.max_lvl.copy()
+    else:
+        mv = of.max_lvl_kh.copy()
     
     d.text((174,406), str(name), font= gen.fontSize(22), fill=options.coloring) 
     d.text((184,488), f"R{lvlUp}", font= gen.fontSize(20), fill=(245,222,179,255))
@@ -264,6 +270,8 @@ async def artifact(characters):
     for infpart in characters:
         CRIT_DMG = 0
         CRIT_RATE = 0
+        CRIT_DMGT = 0
+        CRIT_RATET = 0
         if infpart.detail.artifact_name_set == "":
             continue
         if not infpart.detail.artifact_name_set in listArt:
@@ -301,9 +309,9 @@ async def artifact(characters):
         ArtifactBg.alpha_composite(imageStats,(121,14)) 
 
         if infpart.detail.mainstats.prop_id == "FIGHT_PROP_CRITICAL_HURT":
-            CRIT_DMG += infpart.detail.mainstats.value
+            CRIT_DMGT += infpart.detail.mainstats.value
         if infpart.detail.mainstats.prop_id == "FIGHT_PROP_CRITICAL":
-            CRIT_RATE += infpart.detail.mainstats.value
+            CRIT_RATET += infpart.detail.mainstats.value
 
         
 
@@ -320,12 +328,15 @@ async def artifact(characters):
             d.text(positionTextArtifact[i], v, font= gen.fontSize(19), fill=options.coloring)
             if key.prop_id == "FIGHT_PROP_CRITICAL_HURT":
                 CRIT_DMG += key.value
+                CRIT_DMGT += key.value
             if key.prop_id == "FIGHT_PROP_CRITICAL":
                 CRIT_RATE +=key.value
+                CRIT_RATET +=key.value
 
             i += 1
         tcvR = float('{:.2f}'.format(CRIT_DMG + (CRIT_RATE*2)))
         TCV = f"{tcvR}CV"
+        tcvR = float('{:.2f}'.format(CRIT_DMGT + (CRIT_RATET*2)))
         TOTAL_CV += tcvR
         x = fontSize(15).getlength(TCV)
         d.text((int(43-x/2),6), TCV, font= gen.fontSize(15), fill=options.coloring)
@@ -376,38 +387,15 @@ async def artifactAdd(bg,items,TCV,sets):
         
     return bg
 
-'''async def generationSeven(characters,assets,img,lvl,splash,signatureRes,player):
-    person = assets.character(characters.id)
-    task = []
-    if img != None:
-        task.append(background(img,False,characters.element,signatureRes,characters,player,lvl))
-    else:
-        if splash:
-            task.append(background(characters.image.banner.url,True,characters.element,signatureRes,characters,player,lvl))
-        else:
-            task.append(background(person.images.banner.url,True,characters.element,signatureRes,characters,player,lvl))
-    task.append(const(characters))
-    task.append(artifact(characters.equipments))
-    res = await asyncio.gather(*task)
-    bg = await weapon(res[0],characters.equipments[-1],lvl["lvl"])
-    bg = await stats(bg,characters,assets)
-    bg = await stats(bg,characters,assets)
-    bg = await talants(bg,characters.skills)
-    bg = await addConst(bg,res[1])
-    bg = await artifactAdd(bg,res[2]["art"],res[2]["TCV"],res[2]["set"])
-
-    return bg'''
-
-async def generationSeven(characters, assets, img, lvl, splash, signatureRes, player):
-    person = assets.character(characters.id)
+async def generationSeven(characters, assets, img, lvl, signatureRes, player, typelang = 0):
     task = []
     if img:
-        task.append(background(img, False, characters.element, signatureRes, characters, player, lvl))
+        task.append(background(img, False, characters.element, signatureRes, characters, player, lvl,typelang))
     else:
-        task.append(background(characters.image.banner.url, True, characters.element, signatureRes, characters, player, lvl) if splash else background(person.images.banner.url, True, characters.element, signatureRes, characters, player, lvl))
+        task.append(background(characters.image.banner.url, True, characters.element, signatureRes, characters, player, lvl,typelang))
     task.extend((const(characters), artifact(characters.equipments)))
     res = await asyncio.gather(*task)
-    bg = await weapon(res[0], characters.equipments[-1], lvl["lvl"])
+    bg = await weapon(res[0], characters.equipments[-1], lvl["lvl"],typelang)
     bg = await stats(bg, characters, assets)
     bg = await talants(bg, characters.skills)
     bg = await addConst(bg, res[1])
