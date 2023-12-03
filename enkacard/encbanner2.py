@@ -345,6 +345,7 @@ class ENC:
         c1_4 = {"img": result["1-4"].get("img", None), "card": []}
         for key in result["1-4"]['cards']:
             c1_4["card"].append({"name": key, "id": result["1-4"]['cards'][key]["id"], "card": result["1-4"]['cards'][key]["img"]})
+        
         if result["5-8"] is not None:
             c5_8 = {"img": result["5-8"].get("img", None), "card": []}
             for key in result["5-8"]['cards']:
