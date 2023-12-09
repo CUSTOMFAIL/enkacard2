@@ -334,6 +334,10 @@ async def artifact(characters):
                 CRIT_RATET +=key.value
 
             i += 1
+        if infpart.detail.mainstats.name== "CRIT DMG":
+            CRIT_DMG += infpart.detail.mainstats.value
+        if infpart.detail.mainstats.name== "CRIT Rate":
+            CRIT_RATE += infpart.detail.mainstats.value
         tcvR = float('{:.2f}'.format(CRIT_DMG + (CRIT_RATE*2)))
         TCV = f"{tcvR}CV"
         tcvR = float('{:.2f}'.format(CRIT_DMGT + (CRIT_RATET*2)))
