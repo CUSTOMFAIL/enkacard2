@@ -56,9 +56,9 @@ async def convert_name(x):
 
 
 
-async def generator_artifact(name,raiting,name_set,name_charter,icon,substats,props,imageStats,stats,lvl,imageCharter):
-    CRIT_DMG = 0
-    CRIT_RATE = 0
+async def generator_artifact(name,raiting,name_set,name_charter,icon,substats,props,imageStats,stats,lvl,imageCharter, cod, cor):
+    CRIT_DMG = 0+cod
+    CRIT_RATE = 0+cor
     bg = await gen.open_bg_artifact(raiting)
     bg.alpha_composite(of.frame_artifact_rate,(0,0))
     icon = await imgD(icon)
@@ -128,11 +128,17 @@ async def get_artifact_rate(info, teample, artType,imageCharter):
             raiting = key.detail.rarity
             name_set = key.detail.artifact_name_set
             icon = key.detail.icon.url
+            dd = 0
+            cc = 0
+            if key.detail.mainstats.name == "CRIT DMG":
+                dd = key.detail.mainstats.value
+            elif key.detail.mainstats.name == "CRIT Rate":
+                cc = key.detail.mainstats.value
             stat = f"{key.detail.mainstats.value}{'%' if key.detail.mainstats.type == DigitType.PERCENT else ''}"
             lvl = f"+{key.level}"
             imageStats = gen.getIconAdd(key.detail.mainstats.prop_id, icon = True, size = (36,36))
             if teample == 1:
-                artImg = await generator_artifact(name,raiting,name_set,info.name,icon,key.detail.substats, key.props,imageStats,stat,lvl,imageCharter)
+                artImg = await generator_artifact(name,raiting,name_set,info.name,icon,key.detail.substats, key.props,imageStats,stat,lvl,imageCharter, dd, cc)
 
             nameType = await convert_name(str(key.detail.artifact_type.value))
             if not nameType in artImgList[info.name]:
