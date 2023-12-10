@@ -72,7 +72,10 @@ async def charactersTwo(player,assets,image):
             iconsCharterImg = await imagSize(link = key.icon.url, fixed_width = 71)
             lvlCharter = str(key.level)
             iconCharters = Image.composite(iconCharter, iconsCharterImg, charter_icon_mask.convert("L"))
-            charter_bg.alpha_composite(banner,(32,11))
+            try:
+                charter_bg.alpha_composite(banner,(32,11))
+            except Exception as e:
+                pass
             charter_bg.alpha_composite(iconCharter,(0,5))
             charter_bg.alpha_composite(iconCharters,(0,5))
 
