@@ -46,6 +46,7 @@ def signature(hide,uid):
     return SignatureText
     
 async def openUserImg(img):
+    print(img)
     if type(img) != str:
         img = img
     elif type(img) == str:
