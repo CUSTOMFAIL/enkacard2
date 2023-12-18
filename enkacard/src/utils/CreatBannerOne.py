@@ -46,8 +46,8 @@ def signature(hide,uid):
     return SignatureText
     
 async def openUserImg(img):
-    print(img)
     if type(img) != str:
+        return None
         img = img
     elif type(img) == str:
         linkImg = re.search("(?P<url>https?://[^\s]+)", img)
